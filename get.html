@@ -1,0 +1,17 @@
+<script>
+	fetch("simpsons.json")
+		.then(data => data.text()
+			.then(function(text){
+				let json = JSON.parse(text);
+                json = json.sort((a, b) => {
+                    if(a.author < b.author)
+                        return -1;
+                    if(a.author > b.author)
+                        return 1;
+                    return 0;
+                });
+                let final = JSON.stringify(json, null, 4);
+                console.log(final);
+			})
+		);
+</script>
