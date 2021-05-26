@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="icon" href="https://cdn.discordapp.com/emojis/365990021880086528.png?v=1">
+		<meta charset="utf-8">
+		 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title></title>
+		 <meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+			html{scroll-behavior: smooth;}
+            body, html{
+                min-height: 100%;
+                margin:0;
+                height:100%;
+                max-width: 760px !important;
+                position: relative;
+                margin: 0 auto;
+            }
+            *{
+                font-family: "Gill Sans", sans-serif;
+            }
+			.main, .graph{
+				width:100%;
+				display:flex;
+                flex-direction: column;
+				align-items:center;
+                height:100%;
+                justify-content: center;
+			}
+            .main{
+                position: relative;
+            }
+			#buttons{
+				display:flex;
+				align-items:center;
+				justify-content: center;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 50px;
+			}
+            
+			.buttons-main, .buttons{
+				min-width:40%;
+				padding:0.9rem 1rem;
+				border-radius:8px;
+				transition: all 0.5s;
+                cursor: pointer;
+                margin:0.75rem !important;
+                font-size: 2rem;
+                text-transform: capitalize;
+                outline: none;
+			}
+            .buttons-main:hover{
+                transform: scale(1.05);
+                opacity:0.9 !important
+            }
+            .buttons-main{
+                transition: all 0.3s;
+                
+            }
+			.buttons-main:active{
+				
+				box-shadow:0 0 5px 2px rgba(0,0,0,0.3);
+			}
+            .buttons-main:active:after{
+              padding: 0;
+              margin: 0;
+              opacity: 1;
+              transition: 0s;
+            }
+            .buttons-main:after {
+              overflow: visible;
+              content: "";
+              background: white;
+              display: block;
+              position: absolute;
+              padding-top: 200%;
+              padding-left: 350%;
+              margin-left: -20px !important;
+              margin-top: -120%;
+              opacity: 0;
+              transition: all 1s;
+            }
+            .buttons-main:focus{
+                opacity: 1 !important;
+            }
+
+            .buttons{
+                 display: inline-block !important;
+            }
+			.modal{
+				position:fixed;
+				top:0;
+				left:0;
+				width:100%;
+				height:100%;
+				background:rgba(0,0,0,0.1);
+				display:flex;
+				align-items:center;
+				justify-content: center;
+                cursor: pointer;
+			}
+			#new-wrapper, #delete-wrapper{
+				box-shadow: 1px 1px 5px 1px #444;
+				display:flex;
+				flex-direction:column;
+				padding:3rem 3rem;
+				align-items:center;
+				justify-content: center;
+				background:white;
+				border-radius:1rem;
+                cursor: default;
+                max-width:340px;
+                width:40%;
+			}
+			#new-wrapper > *{
+				margin:1rem;
+			}
+			#stats ul{
+				border:1px solid rgba(0,0,0,0.5);
+				border-radius:8px;
+				font-size:0.8rem;
+                margin:0;
+                
+                padding:0.75em 0.5em;
+                list-style-type: none;
+			}
+			#stats{
+                min-width: 33%;
+                color: rgba(0,0,0,0.85);
+            }
+			#stats li{
+/*				border-bottom:1px solid rgba(0,0,0,0.5);*/
+                padding:6px;
+                font-size: 1rem;
+			}
+			#stats li:last-of-type{
+				border:none;
+			}
+            #stats-wrapper{
+                margin-top: 50px;
+                min-width: 50%;
+            }
+			.count{
+			}
+            .counts{
+				font-weight: bold;
+                float:right;
+                width:28%;
+            }
+            .counts span{
+                text-align: center;
+                width:50%;
+                display:inline-block;
+            }
+            .stats-head{
+                font-size: 16px;
+                color:rgba(0,0,0,0.5);
+            }
+			#new-input{
+				padding:1rem;
+				border-radius:0.5rem;
+                font-size: 1rem;
+                outline: none;
+                color: rgba(0,0,0,0.85);
+			}
+            button{
+                cursor: pointer;
+/*                outline:none;*/
+            }
+            #plus{
+                position: absolute;
+                right:5%;
+                bottom:3.33%;
+                width:1.65em;
+                height:1.65em;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                /* box-shadow: 2px 2px 2px 2px; */
+                font-weight: bold;
+                font-size: 3em;
+                cursor:pointer;
+                min-width: auto;
+            }
+            .stats-nav > button{
+                margin: 3px;
+            }
+            .stats-nav{
+                padding:0 15px;
+                text-align: center;
+                margin: 30px 0;
+            }
+            .selected, .selected-graph{
+                background: #feab3a !important;
+                color: #fff !important;
+                
+                box-shadow: 0 1px 6px rgb(58 51 53 / 30%);
+            }
+           .selected:after, .selected:before, .selected-graph:after, .selected-graph:before{
+                opacity: 1 !important;
+                position: absolute;
+                top: 0;
+                left: 66% !important;
+                width: 100%;
+                height: 120%;
+                content: '';
+                background: #f89001;
+            }
+            h1{
+                color: rgba(0,0,0,0.85);
+                border-bottom: 2px solid rgba(0,0,0,0.75);
+            }
+            .buttons-wrapper{
+                width: 100%;
+                text-align: center;
+            }
+            .title{
+                text-transform: capitalize;
+                color: rgba(0,0,0,0.8);
+            }
+            #main-nav{
+                position: absolute;
+                display:flex;
+                width:100%;
+                z-index: 9999999;
+            }
+            #main-nav > div{
+                flex-grow: 1;
+                font-size: 26px;
+                padding:25px;
+                text-align: center;
+                transition: all 0.4s;
+                border: 1px solid rgba(0,0,0,0.33);
+                cursor: pointer;
+                color: rgba(0,0,0,0.6);
+            }
+            #main-nav > div:hover{
+                background: rgba(183,229,243,0.5);   
+            }
+            .graph{
+                padding:40px;
+                top:50%;
+                transform: translateY(-50%);
+                width: 100%;
+                box-sizing: border-box;
+                justify-content: space-evenly;
+            }
+            .graph .stats-nav{
+                margin:0;
+            }
+            .main, .graph{
+                position: absolute;
+            }
+		</style>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="bttn.min.css">
+        <!-- Graphs -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+
+	</head>
+		
+	<body>
+        <div id=main-nav>
+            <div id="main-button">Main</div>
+            <div id="graph-button">Graph</div>
+        </div>
+        <div class=main>
+            <div id=buttons></div>
+            
+            <div id=stats-wrapper>
+                <div class=stats-nav>
+                    <button class="bttn-unite bttn-warning bttn-md date-button">Today</button>
+                    <button class="bttn-unite bttn-warning bttn-md date-button">24h</button>
+                    <button class="bttn-unite bttn-warning bttn-md date-button">Week</button>
+                    <button class="bttn-unite bttn-warning bttn-md date-button">Month</button>
+                    <button class="bttn-unite bttn-warning bttn-md date-button selected">All</button>
+                </div>
+                <div id=stats></div>
+            </div>
+            
+            <button class="buttons bttn-unite bttn-warning" id=plus>+</button>
+        </div>
+        
+        <div class=graph>
+            <div class=stats-nav>
+                <button class="bttn-unite bttn-warning bttn-md date-button-graph">Week</button>
+                <button class="bttn-unite bttn-warning bttn-md date-button-graph">Month</button>
+                <button class="bttn-unite bttn-warning bttn-md date-button-graph selected-graph">All</button>
+            </div>
+            <canvas id="lineChart" style="height: 370px; width: 100%;"></canvas>
+        </div>
+        
+		
+        <div class=modal id=add-new>
+            <div id=new-wrapper>
+                <h1>New</h1>
+                <input id=new-input placeholder="Drink">
+                <div class=buttons-wrapper>
+                    <button id=new-back class="buttons bttn-unite bttn-warning">Back</button>
+                    <button id=new-confirm class="buttons bttn-pill bttn-md bttn-warning">OK</button>
+                </div>
+            </div>
+        </div>
+        <div class=modal id=remove-button>
+            <div id=delete-wrapper>
+                <h1>Delete?</h1>
+                <div class=buttons-wrapper>
+                    <button id=delete-back class="buttons bttn-unite bttn-warning">Back</button>
+                    <button id=delete-confirm class="buttons bttn-pill bttn-md bttn-warning">Delete</button>
+                </div>
+            </div>
+        </div>
+	</body>
+		<script>			
+            // Today = since 4 am    
+
+            $(".modal").fadeOut(0);
+            $(".graph").fadeOut(0);
+			const colors = ["#2962ff", "#2979ff", "#448aff", "#82b1ff", "#0d47a1", "#1565c0", "#1976d2", "#1e88e5"];
+
+			"use strict;"
+			// Array of main buttons
+			let buttons = JSON.parse(window.localStorage["buttons"] || "[]");
+			// Object of arrays of dates 	// one date = one click
+			let stats = JSON.parse(window.localStorage["stats"] || "{}");
+
+            let mouseDown = false;
+            let lastMarked = -1;
+            
+            let myLineChart = null;
+            
+            let holdTimeout;
+            
+			renderButtons();
+			renderStats(stats);
+			initListeners();
+			initDates();
+            
+            console.log(buttons);
+			
+			function addClick(text){
+				if(!stats.hasOwnProperty(text))
+					stats[text] = [];
+				stats[text].push(new Date().toISOString().replace("T", " ").replace(/\..+/, "").slice(0, -3));
+				window.localStorage["stats"] = JSON.stringify(stats);
+				refreshStats(text);
+			}
+
+			function initListeners(){
+				$(".modal").on("click", function(e){
+					if(e.target.classList.contains("modal") || e.target.id == "delete-back")
+						$(".modal").fadeOut(500);
+				});
+				$("#new-confirm").on("click", function(){
+                    if($("#new-input").val())
+					   addNew($("#new-input").val());
+				});
+				$("#new-input").on("keydown", function(e){
+					if(e.key == "Enter"){
+						addNew($(this).val());
+					}
+				});
+                $("#delete-confirm").on("click", function(){
+                    $(".buttons-main").eq(lastMarked).remove();
+                    
+                    let removed = buttons.splice(lastMarked, 1);
+                    delete stats[removed];
+                    window.localStorage["buttons"] = JSON.stringify(buttons);
+                    window.localStorage["stats"] = JSON.stringify(stats);
+                    $(".modal").fadeOut(500);
+				});
+
+				$(".buttons-main").on("click", function(){
+					addClick($(this).text());
+				});
+                $(".buttons-main").on("mousedown touchstart", function(){
+                    mouseDown = true;
+                    lastMarked = $(this).index();
+                    holdTimeout = setTimeout(function(){
+                        if(mouseDown){
+                            $("#remove-button").fadeIn(500); 
+                        }
+                    }, 1500);
+				});
+                $(".buttons-main").on("mouseup touchend", function(){
+                    mouseDown = false;
+                    clearInterval(holdTimeout);
+                });
+                
+                $("#plus").on("click", function(){
+                    $("#add-new").fadeIn(500); 
+                    $("#new-input").focus();
+                });
+                
+                $("#main-button").on("click", function(){
+                    $(".main").fadeIn(555);
+                    $(".graph").fadeOut(555);
+                });
+                $("#graph-button").on("click", function(){
+                    $(".graph").fadeIn(555);
+                    $(".main").fadeOut(555);
+                });
+			}
+
+            function initDates(){
+                $(".date-button").on("click", function(){
+                    $(this).addClass("selected").siblings().removeClass("selected");
+                    filterStats($(this).text());
+                });
+                $(".date-button-graph").on("click", function(){
+                    $(this).addClass("selected-graph").siblings().removeClass("selected-graph");
+                    renderGraph($(this).text());
+                });
+            }
+            function filterStats(type){
+                let time = 0;
+                let now = new Date().getTime();
+                let statsFiltered = {};
+                switch(type.toLowerCase()){
+                    case "today":
+                        let dayStart = new Date();
+                        dayStart.setHours(3,59,59,999);
+                        let now = new Date();
+
+                        if(now.getHours() < 4){
+                            time = (now - dayStart) * -1 + 20*3600*1000;
+                        } else {
+                            time = now - dayStart;
+                        }
+                        console.log(time);
+                        break;
+                    case "day": case "24h":
+                        time = 86400 * 1000;
+                        break;
+                    case "week":
+                        time = 86400 * 7 * 1000;
+                        break;
+                    case "month":
+                        time = 86400 * 30 * 1000;
+                        break;
+                    case "all":
+                        renderStats(stats);
+                        return;
+                        break;
+                }
+                
+                for(let key in stats){
+                    statsFiltered[key] = stats[key].filter(drinkTime => {
+                        return (new Date(drinkTime).getTime() > now - time);
+                    });
+                }
+                console.log(statsFiltered);
+                renderStats(statsFiltered);
+            }
+            
+			function renderButtons(){
+				let buttonsHtml = buttons.map((button, index) => {
+					return "<button class='buttons-main bttn-gradient bttn-lg bttn-warning " + button + "'>" + button + "</button>";
+//					return "<button style='background:" + colors[index] + "' class='buttons-main bttn-gradient bttn-md'>" + button + "</button>";
+				}).join("");
+				$("#buttons").html(buttonsHtml);
+			}
+			function renderStats(statsFiltered){
+                console.log(statsFiltered);
+                let lowestDay = "3000";
+                for(const stat in statsFiltered){
+                    if(lowestDay > statsFiltered[stat][0])
+                        lowestDay = statsFiltered[stat][0];
+                }
+                let then = new Date(lowestDay).getTime();
+                let today = new Date().getTime();
+                let dayCount = Math.ceil((today - then) / 86400000);
+                
+				let statsArray = [];
+				for(const stat in statsFiltered){
+                    let average = Math.round(statsFiltered[stat].length/dayCount*10)/10;
+					statsArray.push("<li id='stat-" + stat + "'><span class=title>" + stat + "</span><span class=counts><span class=average>" + average + "</span><span class=count>" + statsFiltered[stat].length + "</span></span></li>");
+				}
+                let nav = "<li style='overflow:hidden'><span class=counts><span class='average stats-head'>Daily</span><span class='count stats-head'>Total</span></li>";
+				let statsHtml = "<ul>" + nav + statsArray.sort(function(a, b){
+					return parseInt(b.match(/count>(\d+)</)[1]) - parseInt(a.match(/count>(\d+)</)[1]);
+				}).join("") + "</ul>";
+				$("#stats").html(statsHtml);
+			}
+			function refreshStats(name){
+				let count = parseInt($("#stat-" + name + " .count").text()) + 1;
+                // renderStats(stats)
+                filterStats($(".selected").text());
+				// $("#stat-" + name + " .count").text(count);
+			}
+			function addNew(val){
+				buttons.push(val);
+                stats[val] = [];
+				window.localStorage["buttons"] = JSON.stringify(buttons);
+                window.localStorage["stats"] = JSON.stringify(stats);
+                location.reload();
+			}
+            
+            renderGraph();
+            function renderGraph(type = "all"){
+                
+                // Parse data
+                let graphData = {};
+                let allDates = [];
+                let colors = {};
+                let time;
+                let now = new Date();
+                now.setHours(23,59,59,999);
+                now = now.getTime();
+                
+                switch(type.toLowerCase()){
+                    case "day": case "24h":
+                        time = 86400 * 1000;
+                        break;
+                    case "week":
+                        time = 86400 * 7 * 1000;
+                        break;
+                    case "month":
+                        time = 86400 * 30 * 1000;
+                        break;
+                    case "all":
+                        time = now;
+                        break;
+                }
+                
+                for(let key in stats){
+                    graphData[key] = {
+                        dates: [],
+                        counts: []
+                    };
+                    
+                    let count = 0;
+                    let skip = false;
+                    for(let i = 0; i < stats[key].length; i++){
+                       
+                        // Averages, colors graph, (compare graph)
+                        if(!(new Date(stats[key][i]).getTime() > now - time)){
+                            skip = true;
+                            continue;
+                        }
+                        
+                        // Single item in array
+                        if(stats[key].length == 1){
+                            graphData[key].dates.push(stats[key][i].slice(0, 10));
+                            graphData[key].counts.push(1);
+                            break;
+                        }
+                            
+                        if((!skip) && (i != 0) && ((stats[key][i].slice(0, 10) != stats[key][i - 1].slice(0, 10)))){
+                            if(i != 0){
+                                graphData[key].dates.push(stats[key][i - 1].slice(0, 10));
+                                graphData[key].counts.push(count);
+                                count = 1;
+                            }
+                        } else {
+                            skip = false;
+                            count++;
+                        }
+                        
+                        // Last item in array
+                        if(stats[key].length == i + 1){
+                            graphData[key].dates.push(stats[key][i].slice(0, 10));
+                            graphData[key].counts.push(count);
+                            count = 1;
+                            break;
+                        }
+                    }
+                    
+                    allDates.push(...graphData[key].dates);
+                }
+
+                switch(type.toLowerCase()){
+                    case "day": case "24h":
+                        time = 86400 * 1000;
+                        break;
+                    case "week":
+                        allDates = [];
+                        for(let i = 6; i >= 0; i--){
+                            let date = new Date(now - i * 86400 * 1000).toISOString().slice(0, 10);
+                            allDates.push(date);
+                        }
+                        break;
+                    case "month":
+                        allDates = [];
+                        for(let i = 29; i >= 0; i--){
+                            let date = new Date(now - i * 86400 * 1000).toISOString().slice(0, 10);
+                            allDates.push(date);
+                        }
+                        break;
+                    case "all":
+                        allDates = [...new Set(allDates)].sort();
+
+                        let then = new Date(allDates[0]).getTime();
+                        let today = new Date().getTime();
+                        let dayCount = Math.ceil((today - then) / 86400000);
+                        console.log(dayCount);
+                        
+                        allDates = [];
+                        for(let i = dayCount; i >= 0; i--){
+                            let date = new Date(now - i * 86400 * 1000).toISOString().slice(0, 10);
+                            allDates.push(date);
+                        }
+                        break;
+                }
+                
+                // Fill empty dates
+                for(let key in graphData){
+                    for(let j = 0; j < allDates.length; j++){
+                        if(graphData[key].dates[j] != allDates[j]){
+                            graphData[key].dates.splice(j, 0, allDates[j]);
+                            graphData[key].counts.splice(j, 0, 0);
+                        }
+                    }
+                }
+                
+                let ctxl = $("#lineChart")[0].getContext('2d');
+
+                var firstGradient = ctxl.createLinearGradient(0, 0, 200, 200);
+                firstGradient.addColorStop(0, "rgba(10,3,138,0.4)");
+                firstGradient.addColorStop(0.5, "rgba(91,91,255,0.4)");
+                firstGradient.addColorStop(1, "rgba(0,189,227,0.4)");
+                
+                var secondGradient = ctxl.createLinearGradient(0, 0, 200, 200);
+                secondGradient.addColorStop(0, "rgba(82,0,103,0.4)");
+                secondGradient.addColorStop(0.5, "rgba(215,100,255,0.4)");
+                secondGradient.addColorStop(1, "rgba(223,144,255,0.4)");
+                
+                var thirdGradient = ctxl.createLinearGradient(0, 0, 200, 200);
+                thirdGradient.addColorStop(0, "rgba(133,0,61,0.4)");
+                thirdGradient.addColorStop(0.5, "rgba(103,9,121,0.4)");
+                thirdGradient.addColorStop(1, "rgba(175,0,255,0.4)");
+                
+                var fourthGradient = ctxl.createLinearGradient(0, 0, 200, 200);
+                fourthGradient.addColorStop(0, "rgba(166,0,103,0.6)");
+                fourthGradient.addColorStop(0.5, "rgba(215,170,255,0.4)");
+                fourthGradient.addColorStop(1, "rgba(111,66,255,0.4)");
+
+                let graphColors = [firstGradient, secondGradient, thirdGradient, fourthGradient];
+                let lineColors = ['rgba(0, 10, 130, .7)','rgba(200, 99, 132, .7)','rgba(133, 0, 61, .7)','rgba(100, 180, 132, .7)'];
+                
+                let graphRenderData = [];
+                
+                let i = 0;
+                for(let key in graphData){
+                    graphRenderData.push({
+                        label: key,
+                        data: graphData[key].counts,
+                        backgroundColor: graphColors[i],
+                        borderColor: lineColors[i],
+                        borderWidth: 1
+                    });
+                    i++;
+                }
+
+                // console.log("***********allDates************");
+                // console.log(allDates);
+                // console.log("***********graphRenderData************");
+                // console.log(graphRenderData);
+                
+                if(myLineChart == null){
+                    myLineChart = new Chart(ctxl, {
+                        type: 'line',
+                        data: {
+                            labels: allDates,
+                            datasets: graphRenderData
+//                            [
+//                                {
+//                                    label: props.day,
+//                                    data: props.data.temperatures,
+//                                    backgroundColor: firstGradient
+//                                    ,
+//                                    borderColor: [
+//                                        'rgba(0, 10, 130, .7)',
+//                                    ],
+//                                    borderWidth: 2
+//                                },
+//                                {
+//                                    label: "Yesterday",
+//                                    data: props.yesterday.temperatures,
+//                                    backgroundColor: secondGradient,
+//                                    borderColor: [
+//                                        'rgba(200, 99, 132, .7)',
+//                                    ],
+//                                    borderWidth: 1
+//                                }
+//                            ]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        userCallback: function(tick){
+                                            if(Number.isInteger(tick))
+                                                return tick;
+                                            else
+                                                return "";
+                                        }
+                                    }
+                                }]
+                            },
+                            responsive: true,
+                            animation: {
+                                duration: 2000
+                            }
+                        }
+                    });
+                } else {
+                    
+                    myLineChart.config.data.labels = allDates;
+                    
+                    let i = 0;
+                    for(let key in graphData){
+                        myLineChart.config.data.datasets[i].label = key;
+                        myLineChart.config.data.datasets[i].data = graphData[key].counts;
+                        i++;
+                    }
+                    
+                    myLineChart.update();
+                }
+            }
+                
+                
+        
+		</script>
+</html>
